@@ -1,0 +1,17 @@
+{
+  "name": "telegram-mini-app-adgated",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ad-gated Telegram Mini App — root scripts to run backend + frontend together.",
+  "scripts": {
+    "setup": "npm --prefix backend install && npm --prefix backend run seed && npm --prefix frontend install",
+    "backend": "npm --prefix backend run dev",
+    "frontend": "npm --prefix frontend run dev",
+    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm:backend\" \"npm:frontend\"",
+    "start": "npm run dev",
+    "build": "npm --prefix frontend run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

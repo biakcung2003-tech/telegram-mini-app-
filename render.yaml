@@ -1,0 +1,51 @@
+# Render.com deployment blueprint for the backend (API + Telegram bot).
+# Deploy: push this repo to GitHub, then in Render create a "Blueprint" from it.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: tma-adgated-backend
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run seed
+    startCommand: npm start
+    healthCheckPath: /health
+    # Persistent disk so the SQLite DB + uploaded thumbnails survive redeploys.
+    disk:
+      name: tma-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
+      - key: BOT_MODE
+        value: webhook
+      # ── Set these in the Render dashboard (marked sync:false) ──
+      - key: BOT_TOKEN
+        sync: false
+      - key: MINI_APP_URL           # your Cloudflare Pages URL
+        sync: false
+      - key: PUBLIC_BACKEND_URL     # this service's URL, e.g. https://tma-adgated-backend.onrender.com
+        sync: false
+      - key: BOT_WEBHOOK_DOMAIN     # same as PUBLIC_BACKEND_URL
+        sync: false
+      - key: CORS_ORIGINS           # your Cloudflare Pages URL
+        sync: false
+      - key: ADSTERRA_SMARTLINK_URL
+        sync: false
+      # Secrets — generate strong random values
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GRANT_SECRET
+        generateValue: true
+      - key: AD_S2S_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
